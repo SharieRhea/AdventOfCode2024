@@ -4,7 +4,7 @@ use std::io::{BufRead, BufReader};
 use std::path::Path;
 
 fn main() {
-    let path = Path::new("resources/day01.txt");
+    let path = Path::new("src/resources/day01.txt");
     // open the file and match result enum in case of error
     let file = match File::open(&path) {
         Err(why) => panic!("Failed to open {}: {}", path.display(), why),
