@@ -45,3 +45,16 @@ fn get_reader(filename: &str) -> BufReader<File> {
     };
     return BufReader::new(file);
 }
+
+pub fn get_points(point: (usize, usize), height: usize, width: usize) -> Vec<(usize, usize)> {
+    // get points going [up, down, left, right]
+    let list = vec![
+        (point.0 as i32, point.1 as i32 - 1), (point.0 as i32, point.1 as i32 + 1), (point.0 as i32 - 1, point.1 as i32), (point.0 as i32 + 1, point.1 as i32)
+    ];
+    // make sure each point is actually on the grid and convert to usize
+    list.into_iter().filter(|it| check_bounds(*it, height, width)).map(|it| (it.0 as usize, it.1 as usize)).collect()
+}
+
+fn check_bounds(point: (i32, i32), height: usize, width: usize) -> bool {
+    point.0 >= 0 && point.0 < width as i32 && point.1 >= 0 && point.1 < height as i32
+}
