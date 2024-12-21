@@ -1,5 +1,5 @@
 use std::fs::File;
-use std::io::{BufRead, BufReader};
+use std::io::{BufRead, BufReader, Read};
 use std::path::Path;
 
 pub fn read_lines(filename: &str) -> Vec<String> {
@@ -13,12 +13,9 @@ pub fn read_lines(filename: &str) -> Vec<String> {
 }
 
 pub fn read_file(filename: &str) -> String {
-    let reader = get_reader(filename);
+    let mut reader = get_reader(filename);
     let mut input: String = "".to_owned();
-    for line in reader.lines() {
-        // panic if there is an error reading the line
-        input.push_str(&line.unwrap()); 
-    }
+    let _ = reader.read_to_string(&mut input);
     return input;
 }
 
