@@ -52,6 +52,6 @@ pub fn get_points(point: (usize, usize), height: usize, width: usize) -> Vec<(us
     list.into_iter().filter(|it| check_bounds(*it, height, width)).map(|it| (it.0 as usize, it.1 as usize)).collect()
 }
 
-fn check_bounds(point: (i32, i32), height: usize, width: usize) -> bool {
+pub fn check_bounds(point: (i32, i32), height: usize, width: usize) -> bool {
     point.0 >= 0 && point.0 < width as i32 && point.1 >= 0 && point.1 < height as i32
 }
