@@ -22,10 +22,9 @@ fn part_1(numbers: &Vec<i64>) -> i64 {
 }
 
 fn part_2(numbers: &Vec<i64>) -> i64 {
-    // store each unique 4 number change sequences
-    let mut sequences: HashSet<[i64; 4]> = HashSet::new();
     // collect what bananas will be bought for each sequence of changes
-    let mut map: HashMap<(usize, [i64; 4]), i64> = HashMap::new();
+    let mut monkeys: HashSet<(usize, [i64; 4])> = HashSet::new();
+    let mut map: HashMap<[i64; 4], i64> = HashMap::new();
 
     for (id, number) in numbers.into_iter().enumerate() {
         // set up the first 4 price changes
@@ -38,33 +37,29 @@ fn part_2(numbers: &Vec<i64>) -> i64 {
         }
         // do the remaining secret generations
         for _ in 0..1996 {
-            let array: [i64; 4] = changes.clone().try_into().expect("invalid length");
-            if !map.contains_key(&(id, array)) {
+            // only bother with sequences that have a price increase at the end
+            if changes[3] > 0 {
+                let array: [i64; 4] = changes.clone().try_into().expect("invalid length");
                 // only count the first time this sequence is seen
-                map.insert((id, array), current % 10);
+                if !monkeys.contains(&(id, array)) {
+                    monkeys.insert((id, array));
+                    // add to the total if it exists, start new if not
+                    if let Some(bananas) = map.get_mut(&array) {
+                        *bananas += current % 10;
+                    }
+                    else {
+                        map.insert(array, current % 10);
+                    }
+                }
             }
-            sequences.insert(array);
             changes.remove(0);
             (current, change) = calculate_price_change(current);
             changes.push(change);
         }
     }
 
-    // now, check each sequence and see what the max bananas we can get is
-    // this is brute force and takes ~30s
-    let mut bananas = 0;
-    for sequence in sequences.iter() {
-        let mut sequence_bananas = 0;
-        for id in 0..numbers.len() {
-            if let Some(amount) = map.get(&(id, *sequence)) {
-                sequence_bananas += amount;
-            }
-        } 
-        if bananas < sequence_bananas {
-            bananas = sequence_bananas;
-        }
-    }
-    return bananas;    
+    // see what the max was
+    return *map.values().into_iter().max().unwrap();
 }
 
 fn calculate_price_change(number: i64) -> (i64, i64) {
